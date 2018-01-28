@@ -1,0 +1,204 @@
+Query times are for illustration purposes only. Actual performance vary depending on hardware, MySQL version, server configuration and the actual data.
+
+The queries shown here are based on actual queries executed by phpBB, reformatted for readability and with index hints used to force a particular query plan. IDs and other dynamic values are replaced with `?` as a placeholder.
+
+
+## phpbb_forums_watch.user_id
+
+`user_id` `forum_id`
+
+This index replace the default index on `(user_id)`. 
+
+
+## phpbb_notifications.most_recent
+
+`user_id` `notification_time`
+
+This index is used to retrieve the most recent notifications for a given user. This type of query is used on nearly every page. This index's performance is still being evaluated.
+
+
+## phpbb_posts.reading_order
+
+`topic_id` `post_visibility` `post_time` `post_id`
+
+This index can be used to select a topic's visible posts in chronological order--for instance in viewtopic--with no filesort. It can reduce the query times by up to 98% (50x speedup) on topics with more than 5000 posts. It is also used to select the first unread post of a topic and when filtering posts to those created in the last X days.
+
+Below is the type of query used in viewtopic.
+
+```sql
+  SELECT p.post_id
+    FROM phpbb_posts p USE INDEX (reading_order)
+   WHERE p.topic_id = ?
+     AND p.post_visibility = 1
+ORDER BY p.post_time ASC, p.post_id ASC
+   LIMIT 15
+```
+```
+        table: p
+         type: ref
+possible_keys: reading_order
+          key: reading_order
+      key_len: 5
+          ref: const,const
+         rows: 13836
+        Extra: Using where; Using index
+```
+```sql
+  SELECT p.post_id
+    FROM phpbb_posts p IGNORE INDEX (reading_order)
+   WHERE p.topic_id = ?
+     AND p.post_visibility = 1
+ORDER BY p.post_time ASC, p.post_id ASC
+   LIMIT 15
+```
+```
+        table: p
+         type: ref
+possible_keys: topic_id,tid_post_time,post_visibility
+          key: topic_id
+      key_len: 4
+          ref: const
+         rows: 11593
+        Extra: Using where; Using filesort
+```
+
+Below is the query used in viewtopic to find the first unread post.
+
+```sql
+  SELECT post_id, topic_id, forum_id
+    FROM phpbb_posts FORCE INDEX (reading_order)
+   WHERE topic_id = ?
+     AND post_visibility = 1
+     AND post_time > ?
+     AND forum_id = ?
+ORDER BY post_time ASC, post_id ASC
+LIMIT 1
+```
+```
+        table: phpbb_posts
+         type: range
+possible_keys: reading_order
+          key: reading_order
+      key_len: 9
+          ref: NULL
+         rows: 103
+        Extra: Using index condition; Using where
+```
+```sql
+  SELECT post_id, topic_id, forum_id
+    FROM phpbb_posts IGNORE INDEX (reading_order)
+   WHERE topic_id = ?
+     AND post_visibility = 1
+     AND post_time > ?
+     AND forum_id = ?
+ORDER BY post_time ASC, post_id ASC
+LIMIT 1
+```
+```
+        table: phpbb_posts
+         type: range
+possible_keys: forum_id,topic_id,tid_post_time,post_visibility
+          key: tid_post_time
+      key_len: 8
+          ref: NULL
+         rows: 95
+        Extra: Using index condition; Using where; Using filesort
+```
+
+Below is a query used in viewtopic when filtering posts to only display those posted in the last X days.
+
+```sql
+SELECT COUNT(post_id) AS num_posts
+  FROM phpbb_posts USE INDEX (reading_order)
+ WHERE topic_id = ?
+   AND post_time >= ?
+   AND post_visibility = 1
+```
+```
+        table: phpbb_posts
+         type: range
+possible_keys: reading_order
+          key: reading_order
+      key_len: 9
+          ref: NULL
+         rows: 17
+        Extra: Using where; Using index
+```
+
+```sql
+SELECT COUNT(post_id) AS num_posts
+  FROM phpbb_posts IGNORE INDEX (reading_order)
+ WHERE topic_id = ?
+   AND post_time >= ?
+   AND post_visibility = 1
+```
+```
+        table: phpbb_posts
+         type: range
+possible_keys: topic_id,tid_post_time,post_visibility
+          key: tid_post_time
+      key_len: 8
+          ref: NULL
+         rows: 16
+        Extra: Using index condition; Using where
+```
+
+
+## phpbb_topics.listing_order
+
+`forum_id` `topic_visibility` `topic_type` `topic_last_post_time` `topic_last_post_id`
+
+Similar to `phpbb_posts.reading_order`, this index can be used to select a forum's visible topics in chronological order--for instance in viewforum--with no filesort.
+
+```sql
+  SELECT t.topic_id
+    FROM phpbb_topics t FORCE INDEX (listing_order)
+   WHERE t.forum_id = ?
+     AND t.topic_type IN (0, 1)
+     AND t.topic_visibility = 1
+ORDER BY t.topic_type DESC, t.topic_last_post_time DESC, t.topic_last_post_id DESC
+   LIMIT 25
+```
+```
+        table: t
+         type: range
+possible_keys: listing_order
+          key: listing_order
+      key_len: 5
+          ref: NULL
+         rows: 100694
+        Extra: Using index condition
+```
+```sql
+  SELECT t.topic_id
+    FROM phpbb_topics t FORCE INDEX (listing_order)
+   WHERE t.forum_id = ?
+     AND t.topic_type IN (0, 1)
+     AND t.topic_visibility = 1
+ORDER BY t.topic_type DESC, t.topic_last_post_time DESC, t.topic_last_post_id DESC
+   LIMIT 25
+```
+```
+        table: t
+         type: ref
+possible_keys: forum_id,forum_id_type,fid_time_moved,topic_visibility,forum_vis_last,latest_topics
+          key: latest_topics
+      key_len: 3
+          ref: const
+         rows: 81004
+        Extra: Using where; Using filesort
+```
+
+
+## phpbb_sessions.session_fid
+
+`session_forum_id` `session_user_id`
+
+This index replace the default index on `(session_forum_id)`. It can be used to retrieve a list of users browsing a given forum. Its performance is still being evaluated.
+
+
+## phpbb_topics_watch.user_id
+
+`user_id` `topic_id`
+
+This index replace the default index on `(user_id)`. It can be used in viewtopic and in the UCP pages that lists watched topics for current user. Its performance is still being evaluated.

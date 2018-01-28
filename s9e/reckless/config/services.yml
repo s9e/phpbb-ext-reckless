@@ -1,0 +1,8 @@
+services:
+  s9e.reckless.listener:
+    class: s9e\reckless\listener
+    arguments:
+      - '@dbal.conn'
+      - '%tables.topics%'
+    tags:
+      - { name: event.listener }

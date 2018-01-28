@@ -1,0 +1,19 @@
+{
+	"name": "s9e/reckless",
+	"type": "phpbb-extension",
+	"description": "Reckless performance improvements for admins who live on the bleeding edge.",
+	"homepage": "https://github.com/s9e/phpbb-ext-reckless/",
+	"version": "0.1.0",
+	"keywords": ["phpbb","performance"],
+	"license": "MIT",
+	"require": {
+		"php": ">=5.4.0"
+	},
+	"authors": [{ "name": "JoshyPHP" }],
+	"extra": {
+		"display-name": "s9e/reckless",
+		"soft-require": {
+			"phpbb/phpbb": "3.2.2"
+		}
+	}
+}
