@@ -76,21 +76,24 @@ Rewritten query:
 ```sql
 SELECT t.topic_id FROM ((
      (SELECT t.topic_id, t.topic_type, t.topic_last_post_time, t.topic_last_post_id
-        FROM (phpbb_topics t) WHERE t.forum_id = ?
+        FROM (phpbb_topics t)
+       WHERE t.forum_id = ?
          AND t.topic_type IN (0, 1)
          AND t.topic_visibility = 1
     ORDER BY t.topic_type DESC, t.topic_last_post_time DESC, t.topic_last_post_id DESC
        LIMIT 25)
 UNION ALL
      (SELECT t.topic_id, t.topic_type, t.topic_last_post_time, t.topic_last_post_id
-        FROM (phpbb_topics t) WHERE t.forum_id = ?
+        FROM (phpbb_topics t)
+       WHERE t.forum_id = ?
          AND t.topic_type IN (0, 1)
          AND t.topic_visibility = 1
     ORDER BY t.topic_type DESC, t.topic_last_post_time DESC, t.topic_last_post_id DESC
        LIMIT 25)
 UNION ALL
      (SELECT t.topic_id, t.topic_type, t.topic_last_post_time, t.topic_last_post_id
-        FROM (phpbb_topics t) WHERE t.forum_id = ?
+        FROM (phpbb_topics t)
+       WHERE t.forum_id = ?
          AND t.topic_type IN (0, 1)
          AND t.topic_visibility = 1
     ORDER BY t.topic_type DESC, t.topic_last_post_time DESC, t.topic_last_post_id DESC
