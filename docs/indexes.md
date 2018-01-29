@@ -1,4 +1,4 @@
-Query times are for illustration purposes only. Actual performance vary depending on hardware, MySQL version, server configuration and the actual data.
+Query times are for illustration purposes only. Actual performance vary depending on hardware, MySQL version, server configuration and database content.
 
 The queries shown here are based on actual queries executed by phpBB, reformatted for readability and with index hints used to force a particular query plan. IDs and other dynamic values are replaced with `?` as a placeholder.
 
@@ -7,14 +7,53 @@ The queries shown here are based on actual queries executed by phpBB, reformatte
 
 `user_id` `forum_id`
 
-This index replace the default index on `(user_id)`. 
+This index replaces the default index on `(user_id)` to cover the whole predicate from `watch_topic_forum()`.
 
 
 ## phpbb_notifications.most_recent
 
 `user_id` `notification_time`
 
-This index is used to retrieve the most recent notifications for a given user. This type of query is used on nearly every page. This index's performance is still being evaluated.
+This index eliminates the filesort used to retrieve the most recent notifications for a given user. This type of query is used on nearly every page.
+
+```sql
+  SELECT n.*, nt.notification_type_name
+    FROM phpbb_notifications n, phpbb_notification_types nt
+   WHERE n.user_id = ?
+     AND nt.notification_type_id = n.notification_type_id
+     AND nt.notification_type_enabled = 1
+ORDER BY n.notification_time DESC
+   LIMIT 5
+```
+```
+        table: n
+         type: ref
+possible_keys: item_ident,user,most_recent
+          key: most_recent
+      key_len: 4
+          ref: const
+         rows: 144
+        Extra: Using where
+```
+```sql
+  SELECT n.*, nt.notification_type_name
+    FROM phpbb_notifications n IGNORE INDEX (most_recent), phpbb_notification_types nt
+   WHERE n.user_id = ?
+     AND nt.notification_type_id = n.notification_type_id
+     AND nt.notification_type_enabled = 1
+ORDER BY n.notification_time DESC
+   LIMIT 5
+```
+```
+        table: n
+         type: ref
+possible_keys: item_ident,user
+          key: user
+      key_len: 4
+          ref: const
+         rows: 146
+        Extra: Using where; Using filesort
+```
 
 
 ## phpbb_posts.reading_order
@@ -194,11 +233,12 @@ possible_keys: forum_id,forum_id_type,fid_time_moved,topic_visibility,forum_vis_
 
 `session_forum_id` `session_user_id`
 
-This index replace the default index on `(session_forum_id)`. It can be used to retrieve a list of users browsing a given forum. Its performance is still being evaluated.
+This index replace the default index on `(session_forum_id)`. It can be used to retrieve a list of users browsing a given forum.
 
 
 ## phpbb_topics_watch.user_id
 
 `user_id` `topic_id`
 
-This index replace the default index on `(user_id)`. It can be used in viewtopic and in the UCP pages that lists watched topics for current user. Its performance is still being evaluated.
+This index replace the default index on `(user_id)`. It can be used in viewtopic to cover the whole predicate from `watch_topic_forum()` and in the UCP pages that lists watched topics for current user.
+

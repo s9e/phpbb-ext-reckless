@@ -114,7 +114,7 @@ class listener implements EventSubscriberInterface
 
 		$event['sql_ary'] = [
 			'SELECT'   => preg_replace('(\\w+\\.)', 't.', $sql['SELECT']),
-			'FROM'     => ["((\n" . implode(")\nUNION ALL\n(", $subqueries) . "\n))" => 't'],
+			'FROM'     => ["(\n(" . implode(")\nUNION ALL\n(", $subqueries) . ")\n)" => 't'],
 			'ORDER_BY' => preg_replace('(\\w+\\.)', 't.', $sql['ORDER_BY'])
 		];
 	}
