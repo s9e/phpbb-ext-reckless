@@ -53,7 +53,9 @@ possible_keys: forum_id_type
 Default query:
 
 ```sql
-  SELECT t.topic_id FROM (phpbb_topics t) WHERE t.forum_id IN (?, ?, ?)
+  SELECT t.topic_id
+    FROM (phpbb_topics t)
+   WHERE t.forum_id IN (?, ?, ?)
      AND t.topic_type IN (0, 1)
      AND t.topic_visibility = 1
 ORDER BY t.topic_type DESC, t.topic_last_post_time DESC, t.topic_last_post_id DESC
