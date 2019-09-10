@@ -6,3 +6,14 @@ services:
       - '%tables.topics%'
     tags:
       - { name: event.listener }
+
+  s9e.reckless.minifier:
+    class: s9e\reckless\minifier
+
+  template.twig.lexer:
+      class: s9e\reckless\flexer
+      lazy: true
+      arguments:
+        - '@template.twig.environment'
+      calls:
+        - ['setMinifier', ['@s9e.reckless.minifier']]
