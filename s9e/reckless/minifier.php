@@ -25,7 +25,7 @@ class minifier
 			'(<!--(?:[<\\n]| NOTE:).*?-->)s' => '',
 
 			// Replace self-closing tags
-			'((<(?:br|hr|input)[^>]*?)\\s*/>)' => '$1>',
+			'(<(?:br|hr|input|link|meta)[^>]*?\\K\\s*/(?=>))' => '',
 		];
 		$template = preg_replace(array_keys($replacements), $replacements, $template);
 		$template = $this->minifyCSS($template);
@@ -63,12 +63,12 @@ class minifier
 	protected function minifyCSS($template)
 	{
 		return preg_replace_callback(
-			'(\\bstyle="([^"]+)")',
+			'( style="\\K[^"]++(?="[^<>]*+>))',
 			function ($m)
 			{
-				$minifier = new CSSMinifier('*{' . $m[1] . '}');
+				$minifier = new CSSMinifier('*{' . $m[0] . '}');
 
-				return 'style="' . substr($minifier->minify(), 2, -1) . '"';
+				return substr($minifier->minify(), 2, -1);
 			},
 			$template
 		);

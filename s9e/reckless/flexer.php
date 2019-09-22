@@ -26,16 +26,15 @@ class flexer extends lexer
 	{
 		if ($code instanceof Twig_Source)
 		{
-			return $this->tokenize($code->getCode(), $code->getName());
+			$filename = $code->getName();
+			$code     = $code->getCode();
 		}
 
 		if (isset($this->minifier))
 		{
 			$code = $this->minifier->minifyTemplate($code);
 		}
-$tokens=parent::tokenize($code, $filename);
-file_put_contents('/tmp/'.basename($filename).'.txt',print_r($tokens,true));
 
-		return $tokens;
+		return parent::tokenize($code, $filename);
 	}
 }

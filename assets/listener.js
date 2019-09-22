@@ -5,29 +5,30 @@
 		return e.buttons <= 1 && !e.altKey && !e.ctrlKey && !e.metaKey && !e.shiftKey;
 	}
 
-	/** @var {?Node} */
-	let preventTarget;
+	/** @type {?EventTarget} */
+	let preventTarget = null;
 	window.addEventListener('click', function (e)
 	{
 		if (isNormalLeftClick(e) && preventTarget && e.target.isSameNode(preventTarget))
 		{
 			e.preventDefault();
 		}
-		preventTarget = false;
+		preventTarget = null;
 	});
 	window.addEventListener('mousedown', function (e)
 	{
-		preventTarget = false;
+		preventTarget = null;
 		if (!isNormalLeftClick(e))
 		{
 			return;
 		}
-		var target = e.target, anchor = target;
+
+		let target = e.target, anchor = target;
 		while (anchor)
 		{
 			if (anchor.tagName === 'A')
 			{
-				if (anchor.host === window.location.host && anchor.getAttribute('href') !== '#' && anchor.className.indexOf('dropdown') < 0)
+				if (anchor.host === window.location.host && anchor.getAttribute('href') !== '#' && !/dropdown/.test(anchor.className))
 				{
 					target.click();
 					preventTarget = target;
