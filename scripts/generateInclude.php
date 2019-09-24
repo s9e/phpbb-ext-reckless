@@ -14,7 +14,7 @@ foreach ($map as $filepath)
 	include_once $filepath;
 }
 
-$scores = $relations = array();
+$scores = $relations = [];
 foreach (filterNamespace(get_declared_classes()) as $className)
 {
 	$scores[$className] = 0;
@@ -34,7 +34,7 @@ foreach (filterNamespace(get_declared_classes()) as $className)
 		}
 	}
 	$parentClass = $class->getParentClass();
-	if ($parentClass)
+	if ($parentClass && count(filterNamespace([$parentClass])) === 1)
 	{
 		$parentName = $parentClass->getName();
 		$relations[$className][] = $parentName;
@@ -47,7 +47,7 @@ function filterNamespace(array $fqns)
 		$fqns,
 		function ($fqn)
 		{
-			return (strpos($fqn, 'matthiasmullie\\') === 0);
+			return (strpos($fqn, 'MatthiasMullie\\') === 0);
 		}
 	);
 }
