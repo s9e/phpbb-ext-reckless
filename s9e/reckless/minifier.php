@@ -45,7 +45,7 @@ class minifier
 		return preg_replace_callback(
 			// Match everything from the start of a tag until we don't understand what's going
 			// on anymore, e.g. with inline Twig syntax mixed in
-			'(<\\w+(?:\\s+[-\\w]+="[^"]*")+)',
+			'(<\\w+(?:\\s+[-\\w]+="[^"{}]*")+)',
 			function ($m)
 			{
 				// Remove quotes in attributes and convert empty attributes

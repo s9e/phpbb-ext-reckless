@@ -17,11 +17,7 @@ class listener implements EventSubscriberInterface
 	*/
 	protected $topicsTable;
 
-	/**
-	* @param db     $db
-	* @param string $topicsTable
-	*/
-	public function __construct(db $db, $topicsTable)
+	public function __construct(db $db, string $topicsTable)
 	{
 		$this->db          = $db;
 		$this->topicsTable = $topicsTable;
