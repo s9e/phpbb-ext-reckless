@@ -36,7 +36,7 @@ class minifier
 
 	protected function replaceInterElementWhitespace(string $template): string
 	{
-		// Names of most inline HTML elements
+		// Match most inline HTML elements
 		$inlineRegexp = '(^</?(?:[qu]|a(?:bbr|udio)?|b(?:d[io]|utton)?|c(?:it|od)e|d(?:ata(?:list)?|el|fn)|em(?:bed)?|i(?:frame|mg|n(?:put|s))?|kbd|label|m(?:ark|eter)|o(?:bjec|utpu)t|p(?:icture|rogress)|ruby|s(?:amp|cript|elect|mall|pan|trong|u[bp])?|t(?:extarea|ime)|v(?:ar|ideo)|wbr)\\b)';
 
 		// Match tags and Twig blocks, spans of whitespace, and anything else
