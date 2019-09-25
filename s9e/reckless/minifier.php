@@ -11,33 +11,58 @@ use MatthiasMullie\Minify\CSS as CSSMinifier;
 
 class minifier
 {
-	public function minifyTemplate($template)
+	public function minifyTemplate(string $template): string
 	{
 		$replacements = [
-			// Preserve inter-element whitespace between text-level elements
-			'(</?([abius]|em|span|strong)\\b[^>]*+>\\K\\n\\s*+(?=(?:<!--.*?-->\\s*)*<(?1)))' => ' ',
-
-			// Remove inter-element whitespace but not if it removes the space after an left brace
-			'(>\\n\\s*)' => '>',
-			'((?<!\\{)\\n\\s*<)' => '<',
-
 			// Remove end/spaceless directives
 			'(\\{% (?:end)?spaceless %\\})' => '',
 
 			// Remove comments that are not template directives
 			'(<!--(?:[<\\n]| NOTE:).*?-->)s' => '',
 
-			// Replace self-closing tags
-			'(<(?:br|hr|input|link|meta)[^>]*?\\K\\s*/(?=>))' => '',
+			// Minify self-closing tags
+			'(<(?:br|hr|input|link|meta)[^>]*?\\K\\s*/(?=>))' => ''
 		];
 		$template = $this->encodeScripts($template);
 		$template = preg_replace(array_keys($replacements), $replacements, $template);
+		$template = $this->replaceInterElementWhitespace($template);
 		$template = $this->minifyCSS($template);
 //		$template = $this->minifyJavaScript($template);
 		$template = $this->minifyAttributes($template);
 		$template = $this->decodeScripts($template);
 
 		return trim($template);
+	}
+
+	protected function replaceInterElementWhitespace(string $template): string
+	{
+		$regexp = '((?:<[^>]++>|\\{%.*?%\\})(*:tag)|\\n\\s++(*:ws)|(?:[^\\n<{]++|.)(*:text))';
+		preg_match_all($regexp, $template, $matches);
+
+		$tokens = [['text', '']];
+		foreach ($matches[0] as $i => $content)
+		{
+			$type = $matches['MARK'][$i];
+			if ($type === 'tag' && preg_match('(^</?(?:[abius]|em|span|strong)\\b)', $content))
+			{
+				$type = 'text';
+			}
+
+			$tokens[] = [$type, $content];
+		}
+		$tokens[] = ['text', ''];
+
+		$template = '';
+		foreach ($tokens as $i => [$type, $content])
+		{
+			if ($type === 'ws')
+			{
+				$content = ($tokens[$i - 1][0] === 'text' && $tokens[$i + 1][0] === 'text') ? ' ' : '';
+			}
+			$template .= $content;
+		}
+
+		return $template;
 	}
 
 	protected function decodeScripts(string $template): string
@@ -50,44 +75,29 @@ class minifier
 		return $this->replaceScripts($template, 'base64_encode');
 	}
 
-	protected function replaceScripts(string $template, callable $callback): string
-	{
-		return preg_replace_callback(
-			'((<script[^>]*>)(.*?)(</script>))is',
-			function ($m) use ($callback)
-			{
-				return $m[1] . $callback($m[2]) . $m[3];
-			},
-			$template
-		);
-	}
-
-	/**
-	* 
-	*
-	* @return void
-	*/
-	protected function minifyAttributes($template)
+	protected function minifyAttributes(string $template): string
 	{
 		return preg_replace_callback(
 			// Match everything from the start of a tag until we don't understand what's going
-			// on anymore, e.g. with inline Twig syntax mixed in
+			// on anymore, e.g. when inline Twig syntax gets mixed in
 			'(<\\w+(?:\\s+[-\\w]+="[^"{}]*")+)',
 			function ($m)
 			{
-				// Remove quotes in attributes and convert empty attributes
-				return preg_replace('(=""|(=)"([^\\s<=>"{}]*)")', '$1$2', $m[0]);
+				$html = $m[0];
+
+				// Minify whitespace between attributes
+				$html = preg_replace('(\\s+([-\\w]+="[^"{}]*"))', ' $1', $html);
+
+				// Remove quotes in attributes and minify empty attributes
+				$html = preg_replace('((?<=\\s)([-\\w]++)(?:="(?:\\1)?"|(=)"([^\\s<=>"{}]*)"))', '$1$2$3', $html);
+
+				return $html;
 			},
 			$template
 		);
 	}
 
-	/**
-	* 
-	*
-	* @return void
-	*/
-	protected function minifyCSS($template)
+	protected function minifyCSS(string $template): string
 	{
 		return preg_replace_callback(
 			'( style="\\K[^"]++(?="[^<>]*+>))',
@@ -97,9 +107,26 @@ class minifier
 				{
 					include __DIR__ . '/include.php';
 				}
-				$minifier = new CSSMinifier('*{' . $m[0] . '}');
 
-				return substr($minifier->minify(), 2, -1);
+				$minifier = new CSSMinifier('*{' . $m[0] . '}');
+				$css = substr($minifier->minify(), 2, -1);
+
+				// Twig wants a space after double braces
+				$css = str_replace('{{', '{{ ', $css);
+
+				return $css;
+			},
+			$template
+		);
+	}
+
+	protected function replaceScripts(string $template, callable $callback): string
+	{
+		return preg_replace_callback(
+			'((<script[^>]*>)(.*?)(</script>))is',
+			function ($m) use ($callback)
+			{
+				return $m[1] . $callback($m[2]) . $m[3];
 			},
 			$template
 		);

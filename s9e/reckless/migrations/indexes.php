@@ -15,6 +15,20 @@ class indexes extends migration
 	{
 		return [
 			'add_index' => [
+				$this->table_prefix . 'bbcodes' => [
+					'display_on_post' => [
+						'display_on_posting',
+						'bbcode_tag'
+					]
+				],
+				$this->table_prefix . 'drafts' => [
+					'user_drafts' => [
+						'user_id',
+						'forum_id',
+						'topic_id',
+						'save_time'
+					]
+				],
 				$this->table_prefix . 'forums_watch' => [
 					'user_id' => [
 						'user_id',
@@ -33,6 +47,14 @@ class indexes extends migration
 						'post_visibility',
 						'post_time',
 						'post_id'
+					]
+				],
+				$this->table_prefix . 'profile_fields' => [
+					'display' => [
+						'field_active',
+						'field_no_view',
+						'field_hide',
+						'field_order'
 					]
 				],
 				$this->table_prefix . 'sessions' => [
@@ -55,12 +77,20 @@ class indexes extends migration
 						'user_id',
 						'topic_id'
 					]
+				],
+				$this->table_prefix . 'user_group' => [
+					'user_id' => [
+						'user_id',
+						'user_pending'
+					]
 				]
 			],
 			'drop_keys' => [
+				$this->table_prefix . 'bbcodes'      => ['display_on_post'],
 				$this->table_prefix . 'forums_watch' => ['user_id'],
 				$this->table_prefix . 'sessions'     => ['session_fid'],
-				$this->table_prefix . 'topics_watch' => ['user_id']
+				$this->table_prefix . 'topics_watch' => ['user_id'],
+				$this->table_prefix . 'user_group'   => ['user_id']
 			]
 		];
 	}
@@ -69,6 +99,9 @@ class indexes extends migration
 	{
 		return [
 			'add_index' => [
+				$this->table_prefix . 'bbcodes' => [
+					'display_on_post' => ['display_on_posting']
+				],
 				$this->table_prefix . 'forums_watch' => [
 					'user_id' => ['user_id']
 				],
@@ -77,15 +110,22 @@ class indexes extends migration
 				],
 				$this->table_prefix . 'topics_watch' => [
 					'user_id' => ['user_id']
+				],
+				$this->table_prefix . 'user_group' => [
+					'user_id' => ['user_id']
 				]
 			],
 			'drop_keys' => [
-				$this->table_prefix . 'forums_watch'  => ['user_id'],
-				$this->table_prefix . 'notifications' => ['most_recent'],
-				$this->table_prefix . 'posts'         => ['reading_order'],
-				$this->table_prefix . 'sessions'      => ['session_fid'],
-				$this->table_prefix . 'topics'        => ['listing_order'],
-				$this->table_prefix . 'topics_watch'  => ['user_id']
+				$this->table_prefix . 'bbcodes'        => ['display_on_post'],
+				$this->table_prefix . 'drafts'         => ['user_drafts'],
+				$this->table_prefix . 'forums_watch'   => ['user_id'],
+				$this->table_prefix . 'notifications'  => ['most_recent'],
+				$this->table_prefix . 'posts'          => ['reading_order'],
+				$this->table_prefix . 'profile_fields' => ['display'],
+				$this->table_prefix . 'sessions'       => ['session_fid'],
+				$this->table_prefix . 'topics'         => ['listing_order'],
+				$this->table_prefix . 'topics_watch'   => ['user_id'],
+				$this->table_prefix . 'user_group'     => ['user_id']
 			]
 		];
 	}

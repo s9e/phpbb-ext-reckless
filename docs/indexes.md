@@ -242,3 +242,23 @@ This index replace the default index on `(session_forum_id)`. It can be used to 
 
 This index replace the default index on `(user_id)`. It can be used in viewtopic to cover the whole predicate from `watch_topic_forum()` and in the UCP pages that lists watched topics for current user.
 
+
+## phpbb_bbcodes.display_on_post
+
+`display_on_posting` `bbcode_tag`
+
+
+## phpbb_drafts.user_drafts
+
+`user_id` `forum_id` `topic_id` `save_time`
+
+
+## phpbb_profile_fields.display
+
+`field_active` `field_no_view` `field_hide` `field_order`
+
+
+## phpbb_user_group.user_id
+
+`user_id` `user_pending`
+
