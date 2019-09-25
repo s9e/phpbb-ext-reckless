@@ -36,6 +36,10 @@ class minifier
 
 	protected function replaceInterElementWhitespace(string $template): string
 	{
+		// Names of most inline HTML elements
+		$inlineRegexp = '(^</?(?:[qu]|a(?:bbr|udio)?|b(?:d[io]|utton)?|c(?:it|od)e|d(?:ata(?:list)?|el|fn)|em(?:bed)?|i(?:frame|mg|n(?:put|s))?|kbd|label|m(?:ark|eter)|o(?:bjec|utpu)t|p(?:icture|rogress)|ruby|s(?:amp|cript|elect|mall|pan|trong|u[bp])?|t(?:extarea|ime)|v(?:ar|ideo)|wbr)\\b)';
+
+		// Match tags and Twig blocks, spans of whitespace, and anything else
 		$regexp = '((?:<[^>]++>|\\{%.*?%\\})(*:tag)|\\n\\s++(*:ws)|(?:[^\\n<{]++|.)(*:text))';
 		preg_match_all($regexp, $template, $matches);
 
@@ -43,7 +47,7 @@ class minifier
 		foreach ($matches[0] as $i => $content)
 		{
 			$type = $matches['MARK'][$i];
-			if ($type === 'tag' && preg_match('(^</?(?:[abius]|em|span|strong)\\b)', $content))
+			if ($type === 'tag' && preg_match($inlineRegexp, $content))
 			{
 				$type = 'text';
 			}
