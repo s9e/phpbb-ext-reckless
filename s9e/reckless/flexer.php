@@ -30,7 +30,7 @@ class flexer extends lexer
 			$code     = $code->getCode();
 		}
 
-		if (isset($this->minifier))
+		if (isset($this->minifier) && substr($filename, 0, 4) !== 'acp_')
 		{
 			$code = $this->minifier->minifyTemplate($code);
 		}

@@ -14,9 +14,12 @@ class minifier
 	public function minifyTemplate($template)
 	{
 		$replacements = [
-			// Remove inter-element whitespace
+			// Preserve inter-element whitespace between text-level elements
+			'(</?([abius]|em|span|strong)\\b[^>]*+>\\K\\n\\s*+(?=(?:<!--.*?-->\\s*)*<(?1)))' => ' ',
+
+			// Remove inter-element whitespace but not if it removes the space after an left brace
 			'(>\\n\\s*)' => '>',
-			'(\\n\\s*<)' => '<',
+			'((?<!\\{)\\n\\s*<)' => '<',
 
 			// Remove end/spaceless directives
 			'(\\{% (?:end)?spaceless %\\})' => '',
@@ -27,12 +30,36 @@ class minifier
 			// Replace self-closing tags
 			'(<(?:br|hr|input|link|meta)[^>]*?\\K\\s*/(?=>))' => '',
 		];
+		$template = $this->encodeScripts($template);
 		$template = preg_replace(array_keys($replacements), $replacements, $template);
 		$template = $this->minifyCSS($template);
 //		$template = $this->minifyJavaScript($template);
 		$template = $this->minifyAttributes($template);
+		$template = $this->decodeScripts($template);
 
 		return trim($template);
+	}
+
+	protected function decodeScripts(string $template): string
+	{
+		return $this->replaceScripts($template, 'base64_decode');
+	}
+
+	protected function encodeScripts(string $template): string
+	{
+		return $this->replaceScripts($template, 'base64_encode');
+	}
+
+	protected function replaceScripts(string $template, callable $callback): string
+	{
+		return preg_replace_callback(
+			'((<script[^>]*>)(.*?)(</script>))is',
+			function ($m) use ($callback)
+			{
+				return $m[1] . $callback($m[2]) . $m[3];
+			},
+			$template
+		);
 	}
 
 	/**
@@ -66,6 +93,10 @@ class minifier
 			'( style="\\K[^"]++(?="[^<>]*+>))',
 			function ($m)
 			{
+				if (!class_exists(CSSMinifier::class))
+				{
+					include __DIR__ . '/include.php';
+				}
 				$minifier = new CSSMinifier('*{' . $m[0] . '}');
 
 				return substr($minifier->minify(), 2, -1);
