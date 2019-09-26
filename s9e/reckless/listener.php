@@ -45,7 +45,7 @@ class listener implements EventSubscriberInterface
 	*/
 	public function onViewforumCutoffQuery($event)
 	{
-		$regexp = '(\\s*OR t.topic_type = 2\\s*OR t.topic_type = 3)';
+		$regexp = '(\\s*OR t.topic_type = ' . POST_ANNOUNCE . '\\s*OR t.topic_type = ' . POST_GLOBAL . ')';
 
 		$sql = $event['sql_array'];
 		if ($sql['SELECT'] !== 'COUNT(t.topic_id) AS num_topics' || !preg_match($regexp, $sql['WHERE']))
