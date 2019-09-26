@@ -252,6 +252,15 @@ This index replace the default index on `(user_id)`. It can be used in viewtopic
 
 `user_id` `forum_id` `topic_id` `save_time`
 
+This index is used whenever the posting editor is loaded. A query is executed to determine whether current user has any drafts in order to display the "Load draft" button. When pressed, drafts are loaded in order of `save_time`.
+
+```sql
+SELECT draft_id
+FROM phpbb_drafts
+WHERE user_id = ? AND forum_id = ? AND topic_id = ?
+LIMIT 1
+```
+
 
 ## phpbb_profile_fields.display
 
