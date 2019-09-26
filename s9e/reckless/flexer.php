@@ -17,11 +17,6 @@ class flexer extends lexer
 	*/
 	protected $minifier;
 
-	public function setMinifier(minifier $minifier)
-	{
-		$this->minifier = $minifier;
-	}
-
 	public function tokenize($code, $filename = null)
 	{
 		if ($code instanceof Twig_Source)
@@ -30,8 +25,12 @@ class flexer extends lexer
 			$code     = $code->getCode();
 		}
 
-		if (isset($this->minifier) && substr($filename, 0, 4) !== 'acp_')
+		if (substr($filename, 0, 4) !== 'acp_')
 		{
+			if (!isset($this->minifier))
+			{
+				$this->minifier = new minifier;
+			}
 			$code = $this->minifier->minifyTemplate($code);
 		}
 
