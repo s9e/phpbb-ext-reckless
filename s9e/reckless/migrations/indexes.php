@@ -35,6 +35,12 @@ class indexes extends migration
 						'forum_id'
 					]
 				],
+				$this->table_prefix . 'groups' => [
+					'group_auth' => [
+						'group_id',
+						'group_skip_auth'
+					]
+				],
 				$this->table_prefix . 'notifications' => [
 					'most_recent' => [
 						'user_id',
@@ -119,6 +125,7 @@ class indexes extends migration
 				$this->table_prefix . 'bbcodes'        => ['display_on_post'],
 				$this->table_prefix . 'drafts'         => ['user_drafts'],
 				$this->table_prefix . 'forums_watch'   => ['user_id'],
+				$this->table_prefix . 'groups'         => ['group_auth'],
 				$this->table_prefix . 'notifications'  => ['most_recent'],
 				$this->table_prefix . 'posts'          => ['reading_order'],
 				$this->table_prefix . 'profile_fields' => ['display'],

@@ -270,6 +270,12 @@ SELECT draft_id
  LIMIT 1
 ```
 
+## phpbb_groups.group_auth
+
+`group_id` `group_skip_auth`
+
+This index is used in `acl_raw_data()` and `acl_get_list()`.
+
 
 ## phpbb_profile_fields.display
 
@@ -312,3 +318,4 @@ possible_keys: PRIMARY
 
 `user_id` `user_pending`
 
+This index replaces the default index on `(user_id)`. It's used on the index and viewonline pages, and in ACL functions.
