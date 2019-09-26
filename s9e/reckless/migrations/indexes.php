@@ -2,7 +2,7 @@
 
 /**
 * @package   s9e\reckless
-* @copyright Copyright (c) 2018 The s9e Authors
+* @copyright Copyright (c) 2018-2019 The s9e Authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
 namespace s9e\reckless\migrations;
@@ -85,13 +85,7 @@ class indexes extends migration
 					]
 				]
 			],
-			'drop_keys' => [
-				$this->table_prefix . 'bbcodes'      => ['display_on_post'],
-				$this->table_prefix . 'forums_watch' => ['user_id'],
-				$this->table_prefix . 'sessions'     => ['session_fid'],
-				$this->table_prefix . 'topics_watch' => ['user_id'],
-				$this->table_prefix . 'user_group'   => ['user_id']
-			]
+			'drop_keys' => array_keys($this->revert_schema()['add_index'])
 		];
 	}
 
@@ -115,18 +109,7 @@ class indexes extends migration
 					'user_id' => ['user_id']
 				]
 			],
-			'drop_keys' => [
-				$this->table_prefix . 'bbcodes'        => ['display_on_post'],
-				$this->table_prefix . 'drafts'         => ['user_drafts'],
-				$this->table_prefix . 'forums_watch'   => ['user_id'],
-				$this->table_prefix . 'notifications'  => ['most_recent'],
-				$this->table_prefix . 'posts'          => ['reading_order'],
-				$this->table_prefix . 'profile_fields' => ['display'],
-				$this->table_prefix . 'sessions'       => ['session_fid'],
-				$this->table_prefix . 'topics'         => ['listing_order'],
-				$this->table_prefix . 'topics_watch'   => ['user_id'],
-				$this->table_prefix . 'user_group'     => ['user_id']
-			]
+			'drop_keys' => array_keys($this->update_schema()['add_index'])
 		];
 	}
 }
