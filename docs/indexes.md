@@ -318,4 +318,4 @@ possible_keys: PRIMARY
 
 `user_id` `user_pending`
 
-This index replaces the default index on `(user_id)`. It's used on the index and viewonline pages, and in ACL functions.
+This index replaces the default index on `(user_id)`. It's used on the index and viewonline pages if the current user is not an admin, and in ACL functions.
