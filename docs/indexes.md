@@ -111,7 +111,7 @@ Below is the query used in viewtopic to find the first unread post.
      AND post_time > ?
      AND forum_id = ?
 ORDER BY post_time ASC, post_id ASC
-LIMIT 1
+   LIMIT 1
 ```
 ```
         table: phpbb_posts
@@ -131,7 +131,7 @@ possible_keys: reading_order
      AND post_time > ?
      AND forum_id = ?
 ORDER BY post_time ASC, post_id ASC
-LIMIT 1
+   LIMIT 1
 ```
 ```
         table: phpbb_posts
@@ -240,12 +240,21 @@ This index replace the default index on `(session_forum_id)`. It can be used to 
 
 `user_id` `topic_id`
 
-This index replace the default index on `(user_id)`. It can be used in viewtopic to cover the whole predicate from `watch_topic_forum()` and in the UCP pages that lists watched topics for current user.
+This index replaces the default index on `(user_id)`. It can be used in viewtopic to cover the whole predicate from `watch_topic_forum()` and in the UCP pages that lists watched topics for current user.
 
 
 ## phpbb_bbcodes.display_on_post
 
 `display_on_posting` `bbcode_tag`
+
+This index replaces the default index on `(display_on_posting)` and eliminates the filesort in `display_custom_bbcodes()`.
+
+```sql
+  SELECT b.bbcode_id, b.bbcode_tag, b.bbcode_helpline
+    FROM (phpbb_bbcodes b)
+   WHERE b.display_on_posting = 1
+ORDER BY b.bbcode_tag
+```
 
 
 ## phpbb_drafts.user_drafts
@@ -256,15 +265,47 @@ This index is used whenever the posting editor is loaded. A query is executed to
 
 ```sql
 SELECT draft_id
-FROM phpbb_drafts
-WHERE user_id = ? AND forum_id = ? AND topic_id = ?
-LIMIT 1
+  FROM phpbb_drafts
+ WHERE user_id = ? AND forum_id = ? AND topic_id = ?
+ LIMIT 1
 ```
 
 
 ## phpbb_profile_fields.display
 
 `field_active` `field_no_view` `field_hide` `field_order`
+
+This index eliminates the temporary table when viewing a topic or a profile, and also eliminates the filesort if the current user is not an admin or a mod.
+
+```sql
+  SELECT l.*, f.*
+    FROM phpbb_profile_lang l, phpbb_profile_fields f
+   WHERE l.lang_id = ?
+     AND f.field_active = 1
+     AND f.field_hide = 0
+     AND f.field_no_view = 0
+     AND l.field_id = f.field_id
+ORDER BY f.field_order
+```
+```
+        table: f
+         type: ref
+possible_keys: PRIMARY,display
+          key: display
+      key_len: 3
+          ref: const,const,const
+         rows: 7
+        Extra: Using where
+
+        table: l
+         type: eq_ref
+possible_keys: PRIMARY
+          key: PRIMARY
+      key_len: 6
+          ref: phpbb.f.field_id,const
+         rows: 1
+        Extra: 
+```
 
 
 ## phpbb_user_group.user_id
