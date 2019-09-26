@@ -21,7 +21,7 @@ class minifier
 			'(<!--(?:[<\\n]| NOTE:).*?-->)s' => '',
 
 			// Minify self-closing tags
-			'(<(?:br|hr|input|link|meta)[^>]*?\\K\\s*/(?=>))' => ''
+			'(<(?:br|hr|img|input|link|meta)[^>]*?\\K\\s*/(?=>))' => ''
 		];
 		$template = $this->encodeScripts($template);
 		$template = preg_replace(array_keys($replacements), $replacements, $template);
@@ -43,13 +43,26 @@ class minifier
 		$regexp = '((?:<[^>]++>|\\{%.*?%\\})(*:tag)|\\n\\s++(*:ws)|(?:[^\\n<{]++|.)(*:text))';
 		preg_match_all($regexp, $template, $matches);
 
-		$tokens = [['text', '']];
+		$lastType = 'text';
+		$tokens   = [['text', '']];
 		foreach ($matches[0] as $i => $content)
 		{
 			$type = $matches['MARK'][$i];
-			if ($type === 'tag' && preg_match($inlineRegexp, $content))
+			if ($type === 'tag')
 			{
-				$type = 'text';
+				if (preg_match($inlineRegexp, $content))
+				{
+					$type = 'text';
+				}
+				elseif (preg_match('(^<!|^\\{%)', $content))
+				{
+					$type = $lastType;
+				}
+			}
+
+			if ($type === 'tag' || $type === 'text')
+			{
+				$lastType = $type;
 			}
 
 			$tokens[] = [$type, $content];
