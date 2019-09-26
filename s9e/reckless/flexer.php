@@ -25,7 +25,7 @@ class flexer extends lexer
 			$code     = $code->getCode();
 		}
 
-		if (substr($filename, 0, 4) !== 'acp_')
+		if (strpos($filename, 'acp_') === false)
 		{
 			if (!isset($this->minifier))
 			{
