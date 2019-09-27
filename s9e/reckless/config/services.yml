@@ -1,4 +1,20 @@
 services:
+  profilefields.manager:
+    class: s9e\reckless\brofilefields
+    arguments:
+      - '@auth'
+      - '@dbal.conn'
+      - '@dispatcher'
+      - '@request'
+      - '@template'
+      - '@profilefields.type_collection'
+      - '@user'
+      - '%tables.profile_fields%'
+      - '%tables.profile_fields_language%'
+      - '%tables.profile_fields_data%'
+    calls:
+      - [setCache, ['@cache.driver']]
+
   s9e.reckless.listener:
     class: s9e\reckless\listener
     arguments:
@@ -8,7 +24,7 @@ services:
       - { name: event.listener }
 
   template.twig.lexer:
-      class: s9e\reckless\flexer
-      lazy: true
-      arguments:
-        - '@template.twig.environment'
+    class: s9e\reckless\flexer
+    lazy: true
+    arguments:
+      - '@template.twig.environment'
