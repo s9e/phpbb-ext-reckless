@@ -231,9 +231,84 @@ possible_keys: forum_id,forum_id_type,fid_time_moved,topic_visibility,forum_vis_
 
 ## phpbb_sessions.session_fid
 
-`session_forum_id` `session_user_id`
+`session_forum_id` `session_user_id` `session_time`
 
-This index replace the default index on `(session_forum_id)`. It can be used to retrieve a list of users browsing a given forum.
+This index replaces the default index on `(session_forum_id)`. It can be used to retrieve a list of users or the number of guests browsing a given forum.
+
+```sql
+SELECT s.session_user_id, s.session_ip, s.session_viewonline
+  FROM phpbb_sessions s
+ WHERE s.session_time >= ?
+   AND s.session_forum_id = ?
+   AND s.session_user_id <> 1
+```
+```
+        table: s
+         type: range
+possible_keys: session_time,session_user_id,session_fid
+          key: session_fid
+      key_len: 7
+          ref: NULL
+         rows: 47
+        Extra: Using index condition
+```
+```sql
+SELECT COUNT(DISTINCT s.session_ip) as num_guests
+  FROM phpbb_sessions s
+ WHERE s.session_user_id = 1
+   AND s.session_time >= ?
+   AND s.session_forum_id = ?
+```
+```
+        table: s
+         type: range
+possible_keys: session_time,session_user_id,session_fid
+          key: session_fid
+      key_len: 11
+          ref: NULL
+         rows: 4
+        Extra: Using index condition
+```
+
+
+## phpbb_sessions.session_user_id
+
+`session_user_id` `session_time` `session_viewonline`
+
+This index replaces the default index on `(session_user_id)`. It is used on viewtopic to check whether a poster is online and on the index page to count the number of guests.
+
+```sql
+  SELECT session_user_id, MAX(session_time) as online_time, MIN(session_viewonline) AS viewonline
+    FROM phpbb_sessions
+   WHERE session_user_id IN (?, ?, ?, ?)
+GROUP BY session_user_id
+```
+```
+        table: phpbb_sessions
+         type: range
+possible_keys: session_user_id
+          key: session_user_id
+      key_len: 4
+          ref: NULL
+         rows: 4
+        Extra: Using where; Using index
+```
+```sql
+SELECT COUNT(DISTINCT s.session_ip) as num_guests
+  FROM phpbb_sessions s
+ WHERE s.session_user_id = 1
+   AND s.session_time >= ?
+```
+```
+        table: s
+         type: range
+possible_keys: session_time,session_user_id
+          key: session_user_id
+      key_len: 8
+          ref: NULL
+         rows: 137
+        Extra: Using index condition
+```
 
 
 ## phpbb_topics_watch.user_id
