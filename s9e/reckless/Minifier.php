@@ -97,13 +97,13 @@ class Minifier
 		return preg_replace_callback(
 			// Match everything from the start of a tag until we don't understand what's going
 			// on anymore, e.g. when inline Twig syntax gets mixed in
-			'(<\\w+(?:\\s+[-\\w]+="[^"{}]*")+)',
+			'(<\\w+(?:\\s+[-\\w]+="(?:[^"{}]|\\{\\w++\\})*")+)',
 			function ($m)
 			{
 				$html = $m[0];
 
 				// Minify whitespace between attributes
-				$html = preg_replace('(\\s+([-\\w]+="[^"{}]*"))', ' $1', $html);
+				$html = preg_replace('(\\s+([-\\w]+="(?:[^"{}]|\\{\\w++\\})*"))', ' $1', $html);
 
 				// Remove quotes in attributes and minify empty attributes
 				$html = preg_replace('((?<=\\s)([-\\w]++)(?:="(?:\\1)?"|(=)"([^\\s<=>"{}]*)"))', '$1$2$3', $html);
