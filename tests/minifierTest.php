@@ -5,8 +5,42 @@ use s9e\reckless\minifier;
 
 class minifierTest extends TestCase
 {
-	public function test()
+	/**
+	* @dataProvider getMinifyTemplateTests
+	*/
+	public function testMinifyTemplate($original, $expected)
 	{
-		$this->assertTrue(true);
+		$this->assertEquals($expected, (new minifier)->minifyTemplate($original));
+	}
+
+	public function getMinifyTemplateTests()
+	{
+		return [
+			[
+				'',
+				''
+			],
+			[
+				'<div>..</div>
+				<div>...</div>',
+				'<div>..</div><div>...</div>'
+			],
+			[
+				'<ol>
+					<li><b>...</b>
+					<li><i>...</i>
+				</ol>',
+				'<ol><li><b>...</b><li><i>...</i></ol>'
+			],
+			[
+				'<a>...</a>
+				<a>...</a>',
+				'<a>...</a> <a>...</a>'
+			],
+			[
+				'<div id="foo" title="foo bar">..</div>',
+				'<div id=foo title="foo bar">..</div>'
+			],
+		];
 	}
 }
