@@ -94,7 +94,7 @@ class Minifier
 
 	protected function minifyAttributes(string $template): string
 	{
-		$attrRegexp = '[-\\w]+="(?:[^"{}]|\\{+\\s*(?:lang\\(\'\\w++\'\\)|\\w++)\\s*\\}+)*"';
+		$attrRegexp = '[-\\w]+(?:="(?:[^"{}]|\\{+\\s*(?:lang\\(\'\\w++\'\\)|\\w++)\\s*\\}+)*")?';
 
 		return preg_replace_callback(
 			// Match everything from the start of a tag until we don't understand what's going

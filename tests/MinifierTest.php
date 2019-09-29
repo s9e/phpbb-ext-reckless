@@ -73,6 +73,10 @@ class MinifierTest extends TestCase
 				'<a class="footer-link" href="{{ U_PRIVACY }}" title="{{ lang(\'PRIVACY_LINK\') }}" role="menuitem">..</a>',
 				'<a class=footer-link href="{{ U_PRIVACY }}" title="{{ lang(\'PRIVACY_LINK\') }}" role=menuitem>..</a>'
 			],
+			[
+				'<li class="breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList">',
+				'<li class=breadcrumbs itemscope itemtype=http://schema.org/BreadcrumbList>'
+			],
 		];
 	}
 }
