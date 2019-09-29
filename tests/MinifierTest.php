@@ -33,6 +33,13 @@ class MinifierTest extends TestCase
 				'<ol><li><b>...</b><li><i>...</i></ol>'
 			],
 			[
+				'<div>
+					<b>...</b>
+					<i>...</i>
+				</div>',
+				'<div><b>...</b> <i>...</i></div>'
+			],
+			[
 				'<a>...</a>
 				<a>...</a>',
 				'<a>...</a> <a>...</a>'
