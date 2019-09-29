@@ -5,7 +5,7 @@
 * @copyright Copyright (c) 2018-2019 The s9e Authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
-namespace s9e\Reckless;
+namespace s9e\reckless;
 
 use phpbb\cache\driver\driver_interface;
 use phpbb\profilefields\manager;

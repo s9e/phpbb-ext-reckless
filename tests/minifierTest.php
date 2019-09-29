@@ -1,7 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use s9e\Reckless\Minifier;
+use s9e\reckless\Minifier;
 
 class MinifierTest extends TestCase
 {

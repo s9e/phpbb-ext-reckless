@@ -1,6 +1,6 @@
 services:
   profilefields.manager:
-    class: s9e\Reckless\Brofilefields
+    class: s9e\reckless\Brofilefields
     arguments:
       - '@auth'
       - '@dbal.conn'
@@ -16,7 +16,7 @@ services:
       - [setCache, ['@cache.driver']]
 
   s9e.reckless.listener:
-    class: s9e\Reckless\Listener
+    class: s9e\reckless\Listener
     arguments:
       - '@dbal.conn'
       - '%tables.topics%'
@@ -24,7 +24,7 @@ services:
       - { name: event.listener }
 
   template.twig.lexer:
-    class: s9e\Reckless\Flexer
+    class: s9e\reckless\Flexer
     lazy: true
     arguments:
       - '@template.twig.environment'
