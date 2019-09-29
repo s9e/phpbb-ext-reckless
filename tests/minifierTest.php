@@ -46,6 +46,10 @@ class minifierTest extends TestCase
 				<input name="bar" required="required">',
 				'<input name=foo required> <input name=bar required>'
 			],
+			[
+				'<input name="foo" /><br /><img src="img.png" />',
+				'<input name=foo><br><img src=img.png>'
+			],
 		];
 	}
 }
