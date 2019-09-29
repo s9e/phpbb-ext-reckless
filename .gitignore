@@ -1,1 +1,3 @@
-scripts/bin
+/.phpunit.result.cache
+/scripts/bin
+/vendor
