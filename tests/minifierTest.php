@@ -10,7 +10,7 @@ class MinifierTest extends TestCase
 	*/
 	public function testMinifyTemplate($original, $expected)
 	{
-		$this->assertEquals($expected, (new minifier)->minifyTemplate($original));
+		$this->assertEquals($expected, (new Minifier)->minifyTemplate($original));
 	}
 
 	public function getMinifyTemplateTests()
