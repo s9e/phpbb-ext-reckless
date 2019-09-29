@@ -69,6 +69,10 @@ class MinifierTest extends TestCase
 				</li>',
 				'<li><a href="{U_SEARCH_SELF}" role=menuitem> <i class="icon fa-file-o fa-fw icon-gray" aria-hidden=true></i><span>{L_SEARCH_SELF}</span> </a></li>'
 			],
+			[
+				'<a class="footer-link" href="{{ U_PRIVACY }}" title="{{ lang(\'PRIVACY_LINK\') }}" role="menuitem">..</a>',
+				'<a class=footer-link href="{{ U_PRIVACY }}" title="{{ lang(\'PRIVACY_LINK\') }}" role=menuitem>..</a>'
+			],
 		];
 	}
 }
