@@ -50,6 +50,13 @@ class minifierTest extends TestCase
 				'<input name="foo" /><br /><img src="img.png" />',
 				'<input name=foo><br><img src=img.png>'
 			],
+			[
+				'<br />
+
+				<!-- NOTE: text -->
+				<a href="#">...</a>',
+				'<br><a href=#>...</a>'
+			],
 		];
 	}
 }
