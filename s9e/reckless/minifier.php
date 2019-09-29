@@ -120,7 +120,7 @@ class minifier
 			'( style="\\K[^"]++(?="[^<>]*+>))',
 			function ($m)
 			{
-				if (!class_exists(CSSMinifier::class))
+				if (!class_exists(CSSMinifier::class, false))
 				{
 					include __DIR__ . '/include.php';
 				}

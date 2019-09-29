@@ -7,17 +7,17 @@
 */
 namespace s9e\reckless;
 
-use phpbb\cache\driver\driver_interface as cache;
+use phpbb\cache\driver\driver_interface;
 use phpbb\profilefields\manager;
 
 class brofilefields extends manager
 {
 	/**
-	* @var cache
+	* @var driver_interface
 	*/
 	protected $cache;
 
-	public function setCache(cache $cache)
+	public function setCache(driver_interface $cache)
 	{
 		$this->cache = $cache;
 	}
@@ -27,7 +27,7 @@ class brofilefields extends manager
 	*/
 	protected function build_cache()
 	{
-		$key = '_brofilefields_' . $this->user->lang_name . '_' . $this->auth->acl_gets('a_', 'm_') . '_' . $this->auth->acl_getf_global('m_');
+		$key = '_brofilefields_' . $this->user->lang_name . '_' . (!$this->auth->acl_gets('a_', 'm_') && !$this->auth->acl_getf_global('m_'));
 
 		$this->profile_cache = $this->cache->get($key);
 		if ($this->profile_cache === false)
