@@ -57,6 +57,14 @@ class minifierTest extends TestCase
 				<a href="#">...</a>',
 				'<br><a href=#>...</a>'
 			],
+			[
+				'<div>
+					<!-- IF foo -->
+					<a href="#">...</a>
+					<!-- ENDIF -->
+				</div>',
+				'<div><!-- IF foo --><a href=#>...</a> <!-- ENDIF --></div>'
+			],
 		];
 	}
 }
