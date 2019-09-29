@@ -1,16 +1,16 @@
 <?php
 
 /**
-* @package   s9e\reckless
+* @package   s9e\Reckless
 * @copyright Copyright (c) 2018-2019 The s9e Authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
-namespace s9e\reckless;
+namespace s9e\Reckless;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use phpbb\db\driver\driver_interface as db;
 
-class listener implements EventSubscriberInterface
+class Listener implements EventSubscriberInterface
 {
 	/**
 	* @string

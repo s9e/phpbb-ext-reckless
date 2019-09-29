@@ -1,16 +1,16 @@
 <?php
 
 /**
-* @package   s9e\reckless
+* @package   s9e\Reckless
 * @copyright Copyright (c) 2018-2019 The s9e Authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
-namespace s9e\reckless;
+namespace s9e\Reckless;
 
 use phpbb\cache\driver\driver_interface;
 use phpbb\profilefields\manager;
 
-class brofilefields extends manager
+class Brofilefields extends manager
 {
 	/**
 	* @var driver_interface

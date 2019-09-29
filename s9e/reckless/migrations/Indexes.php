@@ -1,15 +1,15 @@
 <?php
 
 /**
-* @package   s9e\reckless
+* @package   s9e\Reckless
 * @copyright Copyright (c) 2018-2019 The s9e Authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
-namespace s9e\reckless\migrations;
+namespace s9e\Reckless\migrations;
 
 use phpbb\db\migration\migration;
 
-class indexes extends migration
+class Indexes extends migration
 {
 	public function update_schema()
 	{

@@ -18,7 +18,7 @@
 	"autoload-dev": {
 		"psr-4": {
 			"phpbb\\": "vendor/phpbb/phpbb/phpbb",
-			"s9e\\reckless\\": "s9e/reckless"
+			"s9e\\Reckless\\": "s9e/reckless"
 		}
 	},
 	"extra": {

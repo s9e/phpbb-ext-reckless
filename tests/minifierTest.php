@@ -1,9 +1,9 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use s9e\reckless\minifier;
+use s9e\Reckless\Minifier;
 
-class minifierTest extends TestCase
+class MinifierTest extends TestCase
 {
 	/**
 	* @dataProvider getMinifyTemplateTests

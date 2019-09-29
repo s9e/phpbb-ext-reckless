@@ -1,15 +1,15 @@
 <?php
 
 /**
-* @package   s9e\reckless
+* @package   s9e\Reckless
 * @copyright Copyright (c) 2018-2019 The s9e Authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
-namespace s9e\reckless;
+namespace s9e\Reckless;
 
 use MatthiasMullie\Minify\CSS as CSSMinifier;
 
-class minifier
+class Minifier
 {
 	public function minifyTemplate(string $template): string
 	{

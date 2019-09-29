@@ -1,16 +1,16 @@
 <?php
 
 /**
-* @package   s9e\reckless
+* @package   s9e\Reckless
 * @copyright Copyright (c) 2018-2019 The s9e Authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
-namespace s9e\reckless;
+namespace s9e\Reckless;
 
 use Twig_Source;
 use phpbb\template\twig\lexer;
 
-class flexer extends lexer
+class Flexer extends lexer
 {
 	/**
 	* @var minifier
