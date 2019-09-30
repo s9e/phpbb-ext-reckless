@@ -69,6 +69,14 @@ class MinifierTest extends TestCase
 				'<!-- IF foo --><a href=#>...</a><!-- ENDIF -->',
 			],
 			[
+				'<div>..</div>
+				<!-- IF foo -->
+					<div>..</div>
+				<!-- ENDIF -->
+				<div>..</div>',
+				'<div>..</div><!-- IF foo --><div>..</div><!-- ENDIF --><div>..</div>',
+			],
+			[
 				'<li>
 					<a href="{U_SEARCH_SELF}" role="menuitem">
 						<i class="icon fa-file-o fa-fw icon-gray" aria-hidden="true"></i><span>{L_SEARCH_SELF}</span>
