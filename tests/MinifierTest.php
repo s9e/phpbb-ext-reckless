@@ -93,12 +93,12 @@ class MinifierTest extends TestCase
 				'<li class=breadcrumbs itemscope itemtype=http://schema.org/BreadcrumbList>'
 			],
 			[
-				'<span style="color: #123456;">..</span>',
-				'<span style=color:#123456>..</span>'
-			],
-			[
 				'<div style="border: solid 1px #000">..</div>',
 				'<div style="border:solid 1px #000">..</div>'
+			],
+			[
+				'<span style="color: #123456;">..</span>',
+				'<span style=color:#123456>..</span>'
 			],
 		];
 	}
