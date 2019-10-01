@@ -1,5 +1,10 @@
 (function (window)
 {
+	function isInternalLink(a)
+	{
+		return a.host === window.location.host && a.getAttribute('href') !== '#' && !/dropdown/.test(a.className);
+	}
+
 	function isNormalLeftClick(e)
 	{
 		return e.buttons <= 1 && !e.altKey && !e.ctrlKey && !e.metaKey && !e.shiftKey;
@@ -28,7 +33,7 @@
 		{
 			if (anchor.tagName === 'A')
 			{
-				if (anchor.host === window.location.host && anchor.getAttribute('href') !== '#' && !/dropdown/.test(anchor.className))
+				if (isInternalLink(anchor))
 				{
 					target.click();
 					preventTarget = target;

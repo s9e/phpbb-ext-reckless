@@ -100,6 +100,10 @@ class MinifierTest extends TestCase
 				'<span style="color: #123456;">..</span>',
 				'<span style=color:#123456>..</span>'
 			],
+			[
+				'',
+				''
+			],
 		];
 	}
 }
