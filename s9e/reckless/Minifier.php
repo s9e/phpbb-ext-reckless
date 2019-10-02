@@ -136,7 +136,9 @@ class Minifier
 			$template .= $content;
 		}
 
+		// Remove redundant spaces around nested blocks
 		$template = preg_replace('((?<= )<!-- IF .*? -->\\K )', '', $template);
+		$template = preg_replace('( (<!-- ENDIF -->)(?= ))', '$1', $template);
 
 		return $template;
 	}

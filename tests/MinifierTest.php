@@ -104,13 +104,11 @@ class MinifierTest extends TestCase
 				'<span>
 					<!-- IF foo -->
 						<!-- IF bar -->
-							<b>1</b>
-						<!-- ELSE -->
-							<b>2</b>
+							<b>..</b>
 						<!-- ENDIF -->
 					<!-- ENDIF -->
 				</span>',
-				'<span> <!-- IF foo --><!-- IF bar --><b>1</b><!-- ELSE --><b>2</b><!-- ENDIF --><!-- ENDIF --> </span>'
+				'<span> <!-- IF foo --><!-- IF bar --><b>..</b><!-- ENDIF --><!-- ENDIF --> </span>'
 			],
 		];
 	}
