@@ -26,6 +26,7 @@ class Minifier
 		$template = $this->encodeScripts($template);
 		$template = preg_replace(array_keys($replacements), $replacements, $template);
 		$template = $this->replaceInterElementWhitespace($template);
+		$template = $this->removeOptionalTags($template);
 		$template = $this->minifyCSS($template);
 //		$template = $this->minifyJavaScript($template);
 		$template = $this->minifyAttributes($template);
@@ -89,6 +90,15 @@ class Minifier
 			},
 			$template
 		);
+	}
+
+	protected function removeOptionalTags(string $template): string
+	{
+		$template = preg_replace('(</li>(?=<(?:li[^>]*|/[ou]l)>))', '', $template);
+		$template = preg_replace('(</d[dt]>(?=<(?:d[dt]|/dl)>))', '', $template);
+		$template = preg_replace('(</p>(?=<p>))', '', $template);
+
+		return $template;
 	}
 
 	protected function replaceInterElementWhitespace(string $template): string

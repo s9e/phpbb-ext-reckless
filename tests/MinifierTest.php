@@ -27,6 +27,20 @@ class MinifierTest extends TestCase
 			],
 			[
 				'<ol>
+					<li>..</li>
+					<li>..</li>
+				</ol>',
+				'<ol><li>..<li>..</ol>'
+			],
+			[
+				'<dl>
+					<dt>..</dt>
+					<dd>..</dd>
+				</dl>',
+				'<dl><dt>..<dd>..</dl>'
+			],
+			[
+				'<ol>
 					<li><b>...</b>
 					<li><i>...</i>
 				</ol>',
