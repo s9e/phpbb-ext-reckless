@@ -95,9 +95,13 @@ class Minifier
 	protected function removeOptionalTags(string $template): string
 	{
 		// https://html.spec.whatwg.org/multipage/syntax.html#syntax-tag-omission
-		$template = preg_replace('(</li>(?=<(?:li[^>]*|/[ou]l)>))', '', $template);
-		$template = preg_replace('(</d[dt]>(?=<(?:d[dt]|/dl)>))',   '', $template);
-		$template = preg_replace('(</p>(?=<p>))',                   '', $template);
+		$regexps = [
+			'</d[dt]>(?=<(?:d[dt]|/dl)>)',
+			'</li>(?=<(?:li[^>]*|/[ou]l)>)',
+			'</option>(?=<(?:option|/optgroup|/select)>)',
+			'</p>(?=<p>)'
+		];
+		$template = preg_replace('(' . implode('|', $regexps) . ')', '', $template);
 
 		return $template;
 	}
