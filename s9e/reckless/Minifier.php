@@ -34,54 +34,6 @@ class Minifier
 		return trim($template);
 	}
 
-	protected function replaceInterElementWhitespace(string $template): string
-	{
-		// Match most inline HTML elements
-		$inlineRegexp = '(^</?(?:[qu]|a(?:bbr|udio)?|b(?:d[io]|utton)?|c(?:it|od)e|d(?:ata(?:list)?|el|fn)|em(?:bed)?|i(?:frame|mg|n(?:put|s))?|kbd|label|m(?:ark|eter)|o(?:bjec|utpu)t|p(?:icture|rogress)|ruby|s(?:amp|cript|elect|mall|pan|trong|u[bp])?|t(?:extarea|ime)|v(?:ar|ideo)|wbr)\\b)';
-
-		// Match tags and Twig blocks, spans of whitespace, and anything else
-		$regexp = '((?:<[^>]++>|\\{%.*?%\\})(*:tag)|\\n\\s++(*:ws)|(?:[^\\n<{]++|.)(*:text))';
-		preg_match_all($regexp, $template, $matches);
-
-		$lastType = 'text';
-		$tokens   = [['text', '']];
-		foreach ($matches[0] as $i => $content)
-		{
-			$type = $matches['MARK'][$i];
-			if ($type === 'tag')
-			{
-				if (preg_match($inlineRegexp, $content))
-				{
-					$type = 'text';
-				}
-				elseif (preg_match('(^<!|^\\{%)', $content))
-				{
-					$type = $lastType;
-				}
-			}
-
-			if ($type === 'tag' || $type === 'text')
-			{
-				$lastType = $type;
-			}
-
-			$tokens[] = [$type, $content];
-		}
-		$tokens[] = ['text', ''];
-
-		$template = '';
-		foreach ($tokens as $i => [$type, $content])
-		{
-			if ($type === 'ws')
-			{
-				$content = ($tokens[$i - 1][0] === 'text' && $tokens[$i + 1][0] === 'text') ? ' ' : '';
-			}
-			$template .= $content;
-		}
-
-		return $template;
-	}
-
 	protected function decodeScripts(string $template): string
 	{
 		return $this->replaceScripts($template, 'base64_decode');
@@ -137,6 +89,56 @@ class Minifier
 			},
 			$template
 		);
+	}
+
+	protected function replaceInterElementWhitespace(string $template): string
+	{
+		// Match most inline HTML elements
+		$inlineRegexp = '(^</?(?:[qu]|a(?:bbr|udio)?|b(?:d[io]|utton)?|c(?:it|od)e|d(?:ata(?:list)?|el|fn)|em(?:bed)?|i(?:frame|mg|n(?:put|s))?|kbd|label|m(?:ark|eter)|o(?:bjec|utpu)t|p(?:icture|rogress)|ruby|s(?:amp|cript|elect|mall|pan|trong|u[bp])?|t(?:extarea|ime)|v(?:ar|ideo)|wbr)\\b)';
+
+		// Match tags and Twig blocks, spans of whitespace, and anything else
+		$regexp = '((?:<[^>]++>|\\{%.*?%\\})(*:tag)|\\n\\s++(*:ws)|(?:[^\\n<{]++|.)(*:text))';
+		preg_match_all($regexp, $template, $matches);
+
+		$lastType = 'text';
+		$tokens   = [['text', '']];
+		foreach ($matches[0] as $i => $content)
+		{
+			$type = $matches['MARK'][$i];
+			if ($type === 'tag')
+			{
+				if (preg_match($inlineRegexp, $content))
+				{
+					$type = 'text';
+				}
+				elseif (preg_match('(^<!|^\\{%)', $content))
+				{
+					$type = $lastType;
+				}
+			}
+
+			if ($type === 'tag' || $type === 'text')
+			{
+				$lastType = $type;
+			}
+
+			$tokens[] = [$type, $content];
+		}
+		$tokens[] = ['text', ''];
+
+		$template = '';
+		foreach ($tokens as $i => [$type, $content])
+		{
+			if ($type === 'ws')
+			{
+				$content = ($tokens[$i - 1][0] === 'text' && $tokens[$i + 1][0] === 'text') ? ' ' : '';
+			}
+			$template .= $content;
+		}
+
+		$template = preg_replace('((?<= )<!-- IF .*? -->\\K )', '', $template);
+
+		return $template;
 	}
 
 	protected function replaceScripts(string $template, callable $callback): string

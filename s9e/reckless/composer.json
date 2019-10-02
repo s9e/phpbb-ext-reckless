@@ -1,1 +1,30 @@
-../../composer.json
+{
+	"name": "s9e/reckless",
+	"type": "phpbb-extension",
+	"description": "Reckless performance improvements for admins who live on the bleeding edge.",
+	"homepage": "https://github.com/s9e/phpbb-ext-reckless/",
+	"version": "0.1.0",
+	"keywords": ["phpbb","performance"],
+	"license": "MIT",
+	"require": {
+		"php": ">=7.2.0"
+	},
+	"require-dev": {
+		"matthiasmullie/minify": "^1.3",
+		"phpbb/phpbb": "^3.2.8",
+		"phpunit/phpunit": "^8.3"
+	},
+	"authors": [{ "name": "JoshyPHP" }],
+	"autoload-dev": {
+		"psr-4": {
+			"phpbb\\": "vendor/phpbb/phpbb/phpbb",
+			"s9e\\reckless\\": "s9e/reckless"
+		}
+	},
+	"extra": {
+		"display-name": "s9e/reckless",
+		"soft-require": {
+			"phpbb/phpbb": "3.2.8"
+		}
+	}
+}
