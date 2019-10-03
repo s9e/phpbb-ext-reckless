@@ -7,7 +7,7 @@
 
 	function isNormalLeftClick(e)
 	{
-		return e.buttons <= 1 && !e.altKey && !e.ctrlKey && !e.metaKey && !e.shiftKey;
+		return e.buttons === 1 && !e.altKey && !e.ctrlKey && !e.metaKey && !e.shiftKey;
 	}
 
 	/** @type {?EventTarget} */
