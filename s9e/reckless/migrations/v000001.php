@@ -9,7 +9,7 @@ namespace s9e\reckless\migrations;
 
 use phpbb\db\migration\migration;
 
-class Indexes extends migration
+class V000001 extends migration
 {
 	public function update_schema()
 	{
