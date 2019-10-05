@@ -80,7 +80,7 @@ class Minifier
 					include __DIR__ . '/include.php';
 				}
 
-				$minifier = new CSSMinifier('*{' . $m[0] . '}');
+				$minifier = new CSSMinifier('b{' . $m[0] . '}');
 				$css = substr($minifier->minify(), 2, -1);
 
 				// Twig wants a space after double braces
@@ -90,6 +90,12 @@ class Minifier
 			},
 			$template
 		);
+	}
+
+	protected function minifyJS(string $template): string
+	{
+		// Ensure the JS starts with a semicolon and does not look like a file path
+		(new MatthiasMullie\Minify\JS(';' . $js))->minify();
 	}
 
 	protected function removeOptionalTags(string $template): string

@@ -26,10 +26,19 @@ class Listener implements EventSubscriberInterface
 	public static function getSubscribedEvents()
 	{
 		return [
+			'core.search_modify_param_after'                 => 'onSearch',
 			'core.viewforum_get_announcement_topic_ids_data' => 'onViewforumAnnouncementQuery',
 			'core.viewforum_get_topic_ids_data'              => 'onViewforumTopicsQuery',
 			'core.viewforum_modify_sort_data_sql'            => 'onViewforumCutoffQuery'
 		];
+	}
+
+	public function onSearch($event)
+	{
+		if ($event['search_id'] === 'unanswered' && $event['show_results'] === 'topics')
+		{
+			$event['sql'] = $this->pruneSearchUnanswered($event['sql']);
+		}
 	}
 
 	/**
@@ -124,5 +133,19 @@ class Listener implements EventSubscriberInterface
 			$sql['FROM'][$table] .= ' FORCE INDEX (' . $index . ')';
 		}
 		$event[$k] = $sql;
+	}
+
+	/**
+	* Remove the posts table from the "unanswered" search if it's not actually being used
+	*/
+	protected function pruneSearchUnanswered(string $sql)
+	{
+		$old = $sql;
+
+		$sql = str_replace(', p.topic_id', ', t.topic_id', $sql);
+		$sql = str_replace('AND p.topic_id = t.topic_id', '', $sql);
+		$sql = preg_replace('(AND p\\.forum_id NOT IN \\([0-9, ]++\\))', '', $sql);
+
+		return (strpos($sql, 'p.') === false) ? $sql : $old;
 	}
 }
