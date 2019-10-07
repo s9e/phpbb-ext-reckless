@@ -39,28 +39,28 @@ class Listener implements EventSubscriberInterface
 	{
 		return [
 			'core.acp_ban_after'                             => 'onBan',
-//			'core.phpbb_content_visibility_get_visibility_sql_before' => 'onVisibility',
+			'core.phpbb_content_visibility_get_visibility_sql_before' => 'onVisibility',
 			'core.search_modify_param_after'                 => 'onSearch',
 			'core.viewforum_get_announcement_topic_ids_data' => 'onViewforumAnnouncementQuery',
 			'core.viewforum_get_topic_ids_data'              => 'onViewforumTopicsQuery',
-//			'core.viewforum_modify_page_title'               => 'onViewforum',
+			'core.viewforum_modify_page_title'               => 'onViewforum',
 			'core.viewforum_modify_sort_data_sql'            => 'onViewforumCutoffQuery',
-//			'core.viewtopic_modify_forum_id'                 => 'onViewtopic'
+			'core.viewtopic_modify_forum_id'                 => 'onViewtopic'
 		];
 	}
 
 	public function onVisibility($event)
 	{
-		if (empty($this->config['display_unapproved_posts']))
-		{
-			return;
-		}
+		$forum_id   = $event['forum_id'];
+		$prefix     = 'forum_' . $event['mode'] . 's_';
+		$deleted    = $this->forumCache[$forum_id][$prefix . 'softdeleted']    ?? 1;
+		$unapproved = $this->forumCache[$forum_id][$prefix . 'unapproved'] ?? 1;
 
-		$forum_id = $event['forum_id'];
-		$key      = 'forum_' . $event['mode'] . 's_unapproved';
-		if (isset($this->forumCache[$forum_id][$key]) && $this->forumCache[$forum_id][$key] == 0)
+		// If there are no deleted or unapproved items then we can limit the query to approved items
+		// and make full use of the covering indexes
+		if ($deleted + $unapproved === 0)
 		{
-			$event['get_visibility_sql_overwrite'] = '(2 = 2)';
+			$event['get_visibility_sql_overwrite'] = $event['table_alias'] . $event['mode'] . '_visibility = ' . ITEM_APPROVED;
 		}
 	}
 
