@@ -1,4 +1,19 @@
 services:
+  auth.provider.reckless:
+    class: s9e\reckless\AuthProvider
+    parent: auth.provider.db
+    arguments:
+      - '@dbal.conn'
+      - '@config'
+      - '@passwords.manager'
+      - '@request'
+      - '@user'
+      - '@service_container'
+      - '%core.root_path%'
+      - '%core.php_ext%'
+    tags:
+      - { name: auth.provider }
+
   profilefields.manager:
     class: s9e\reckless\Brofilefields
     arguments:
@@ -18,6 +33,7 @@ services:
   s9e.reckless.listener:
     class: s9e\reckless\Listener
     arguments:
+      - '@config'
       - '@dbal.conn'
       - '%tables.topics%'
     tags:

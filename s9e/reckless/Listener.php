@@ -8,17 +8,29 @@
 namespace s9e\reckless;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use phpbb\config\config;
 use phpbb\db\driver\driver_interface as db;
 
 class Listener implements EventSubscriberInterface
 {
 	/**
-	* @string
+	* @var config
+	*/
+	protected $config;
+
+	/**
+	* @var array
+	*/
+	protected $forumCache = [];
+
+	/**
+	* @var string
 	*/
 	protected $topicsTable;
 
-	public function __construct(db $db, string $topicsTable)
+	public function __construct(config $config, db $db, string $topicsTable)
 	{
+		$this->config      = $config;
 		$this->db          = $db;
 		$this->topicsTable = $topicsTable;
 	}
@@ -26,11 +38,36 @@ class Listener implements EventSubscriberInterface
 	public static function getSubscribedEvents()
 	{
 		return [
+			'core.acp_ban_after'                             => 'onBan',
+//			'core.phpbb_content_visibility_get_visibility_sql_before' => 'onVisibility',
 			'core.search_modify_param_after'                 => 'onSearch',
 			'core.viewforum_get_announcement_topic_ids_data' => 'onViewforumAnnouncementQuery',
 			'core.viewforum_get_topic_ids_data'              => 'onViewforumTopicsQuery',
-			'core.viewforum_modify_sort_data_sql'            => 'onViewforumCutoffQuery'
+//			'core.viewforum_modify_page_title'               => 'onViewforum',
+			'core.viewforum_modify_sort_data_sql'            => 'onViewforumCutoffQuery',
+//			'core.viewtopic_modify_forum_id'                 => 'onViewtopic'
 		];
+	}
+
+	public function onVisibility($event)
+	{
+		if (empty($this->config['display_unapproved_posts']))
+		{
+			return;
+		}
+
+		$forum_id = $event['forum_id'];
+		$key      = 'forum_' . $event['mode'] . 's_unapproved';
+		if (isset($this->forumCache[$forum_id][$key]) && $this->forumCache[$forum_id][$key] == 0)
+		{
+			$event['get_visibility_sql_overwrite'] = '(2 = 2)';
+		}
+	}
+
+	public function onBan($event)
+	{
+		// Round up current timestamp to reduce the risks of race conditions
+		$this->config->set('banlist_last_update', 1 + time());
 	}
 
 	public function onSearch($event)
@@ -39,6 +76,11 @@ class Listener implements EventSubscriberInterface
 		{
 			$event['sql'] = $this->pruneSearchUnanswered($event['sql']);
 		}
+	}
+
+	public function onViewforum($event)
+	{
+		$this->forumCache[$event['forum_id']] = $event['forum_data'];
 	}
 
 	/**
@@ -122,6 +164,11 @@ class Listener implements EventSubscriberInterface
 			'FROM'     => ["(\n(" . implode(")\nUNION ALL\n(", $subqueries) . ")\n)" => 't'],
 			'ORDER_BY' => preg_replace('(\\w+\\.)', 't.', $sql['ORDER_BY'])
 		];
+	}
+
+	public function onViewtopic($event)
+	{
+		$this->forumCache[$event['topic_data']['forum_id']] = $event['topic_data'];
 	}
 
 	protected function forceIndex($event, $table, $index)
