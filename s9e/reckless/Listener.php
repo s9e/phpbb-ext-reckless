@@ -53,8 +53,8 @@ class Listener implements EventSubscriberInterface
 	{
 		$forum_id   = $event['forum_id'];
 		$prefix     = 'forum_' . $event['mode'] . 's_';
-		$deleted    = $this->forumCache[$forum_id][$prefix . 'softdeleted']    ?? 1;
-		$unapproved = $this->forumCache[$forum_id][$prefix . 'unapproved'] ?? 1;
+		$deleted    = $this->forumCache[$forum_id][$prefix . 'softdeleted'] ?? 1;
+		$unapproved = $this->forumCache[$forum_id][$prefix . 'unapproved']  ?? 1;
 
 		// If there are no deleted or unapproved items then we can limit the query to approved items
 		// and make full use of the covering indexes
