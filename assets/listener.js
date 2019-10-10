@@ -14,7 +14,7 @@
 	let preventTarget = null;
 	window.addEventListener('click', function (e)
 	{
-		if (isNormalLeftClick(e) && preventTarget && e.target.isSameNode(preventTarget))
+		if (preventTarget && isNormalLeftClick(e) && e.target.isSameNode(preventTarget))
 		{
 			e.preventDefault();
 		}

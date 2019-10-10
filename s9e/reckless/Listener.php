@@ -39,7 +39,7 @@ class Listener implements EventSubscriberInterface
 	{
 		return [
 			'core.acp_ban_after'                             => 'onBan',
-			'core.phpbb_content_visibility_get_visibility_sql_before' => 'onVisibility',
+			'core.phpbb_content_visibility_get_visibility_sql_before' => 'onVisibilitySql',
 			'core.search_modify_param_after'                 => 'onSearch',
 			'core.viewforum_get_announcement_topic_ids_data' => 'onViewforumAnnouncementQuery',
 			'core.viewforum_get_topic_ids_data'              => 'onViewforumTopicsQuery',
@@ -47,21 +47,6 @@ class Listener implements EventSubscriberInterface
 			'core.viewforum_modify_sort_data_sql'            => 'onViewforumCutoffQuery',
 			'core.viewtopic_modify_forum_id'                 => 'onViewtopic'
 		];
-	}
-
-	public function onVisibility($event)
-	{
-		$forum_id   = $event['forum_id'];
-		$prefix     = 'forum_' . $event['mode'] . 's_';
-		$deleted    = $this->forumCache[$forum_id][$prefix . 'softdeleted'] ?? 1;
-		$unapproved = $this->forumCache[$forum_id][$prefix . 'unapproved']  ?? 1;
-
-		// If there are no deleted or unapproved items then we can limit the query to approved items
-		// and make full use of the covering indexes
-		if ($deleted + $unapproved === 0)
-		{
-			$event['get_visibility_sql_overwrite'] = $event['table_alias'] . $event['mode'] . '_visibility = ' . ITEM_APPROVED;
-		}
 	}
 
 	public function onBan($event)
@@ -169,6 +154,21 @@ class Listener implements EventSubscriberInterface
 	public function onViewtopic($event)
 	{
 		$this->forumCache[$event['topic_data']['forum_id']] = $event['topic_data'];
+	}
+
+	public function onVisibilitySql($event)
+	{
+		$forum_id   = $event['forum_id'];
+		$prefix     = 'forum_' . $event['mode'] . 's_';
+		$deleted    = $this->forumCache[$forum_id][$prefix . 'softdeleted'] ?? 1;
+		$unapproved = $this->forumCache[$forum_id][$prefix . 'unapproved']  ?? 1;
+
+		// If there are no deleted or unapproved items then we can limit the query to approved items
+		// and make full use of the covering indexes
+		if ($deleted + $unapproved === 0)
+		{
+			$event['get_visibility_sql_overwrite'] = $event['table_alias'] . $event['mode'] . '_visibility = ' . ITEM_APPROVED;
+		}
 	}
 
 	protected function forceIndex($event, $table, $index)
