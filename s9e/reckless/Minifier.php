@@ -158,7 +158,7 @@ class Minifier
 		}
 
 		// Remove redundant spaces around nested blocks
-		$template = preg_replace('((?<= )(?:<!-- IF .*? -->|\\{% if .*? %\\})\\K )', '', $template);
+		$template = preg_replace('((?<= )(<!-- IF [^-]++-->|\\{% if [^%]++%\\})\\K )', '', $template);
 		$template = preg_replace('( (<!-- ENDIF -->|\\{% endif %\\})(?= ))', '$1', $template);
 
 		return $template;
