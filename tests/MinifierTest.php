@@ -124,6 +124,18 @@ class MinifierTest extends TestCase
 				</span>',
 				'<span> <!-- IF foo --><!-- IF bar --><b>..</b><!-- ENDIF --><!-- ENDIF --> </span>'
 			],
+			[
+				"<hr>\n<hr>",
+				'<hr><hr>'
+			],
+			[
+				'<div class="post <!-- IF postrow.S_ROW_COUNT is odd -->bg1<!-- ELSE -->bg2<!-- ENDIF --><!-- IF postrow.S_UNREAD_POST --> unreadpost<!-- ENDIF --><!-- IF postrow.S_POST_REPORTED --> reported<!-- ENDIF -->">',
+				'<div class="post <!-- IF postrow.S_ROW_COUNT is odd -->bg1<!-- ELSE -->bg2<!-- ENDIF --><!-- IF postrow.S_UNREAD_POST --> unreadpost<!-- ENDIF --><!-- IF postrow.S_POST_REPORTED --> reported<!-- ENDIF -->">'
+			],
+			[
+				'<a href="<!-- IF postrow.contact.U_CONTACT -->{postrow.contact.U_CONTACT}<!-- ELSE -->{postrow.U_POST_AUTHOR}<!-- ENDIF -->" title="{postrow.contact.NAME}"<!-- IF $S_LAST_CELL --> class="last-cell"<!-- ENDIF --><!-- IF postrow.contact.ID eq \'jabber\' --> onclick="popup(this.href, 750, 320); return false;"<!-- ENDIF -->>',
+				'<a href="<!-- IF postrow.contact.U_CONTACT -->{postrow.contact.U_CONTACT}<!-- ELSE -->{postrow.U_POST_AUTHOR}<!-- ENDIF -->" title="{postrow.contact.NAME}"<!-- IF $S_LAST_CELL --> class="last-cell"<!-- ENDIF --><!-- IF postrow.contact.ID eq \'jabber\' --> onclick="popup(this.href, 750, 320); return false;"<!-- ENDIF -->>'
+			],
 		];
 	}
 }

@@ -45,7 +45,8 @@ class Listener implements EventSubscriberInterface
 			'core.viewforum_get_topic_ids_data'              => 'onViewforumTopicsQuery',
 			'core.viewforum_modify_page_title'               => 'onViewforum',
 			'core.viewforum_modify_sort_data_sql'            => 'onViewforumCutoffQuery',
-			'core.viewtopic_modify_forum_id'                 => 'onViewtopic'
+			'core.viewtopic_modify_forum_id'                 => 'onViewtopic',
+			'core.viewtopic_modify_post_data'                => 'onViewTopicQuery'
 		];
 	}
 
@@ -156,6 +157,30 @@ class Listener implements EventSubscriberInterface
 		$this->forumCache[$event['topic_data']['forum_id']] = $event['topic_data'];
 	}
 
+	public function onViewTopicQuery($event)
+	{
+		$userCache = $event['user_cache'];
+		$userIds   = [];
+		foreach (['post_delete_user', 'post_edit_user'] as $key)
+		{
+			foreach ($event['rowset'] as $row)
+			{
+				$userId = $row[$key];
+				if ($userId && !isset($userCache[$userId]))
+				{
+					$userIds[] = $userId;
+				}
+			}
+		}
+		if (empty($userIds))
+		{
+			return;
+		}
+
+		$sql = 'SELECT * FROM ' . USERS_TABLE . ' WHERE ' . $this->db->sql_in_set('user_id', $userIds);
+		die($sql);
+	}
+
 	public function onVisibilitySql($event)
 	{
 		$forum_id   = $event['forum_id'];
@@ -185,14 +210,21 @@ class Listener implements EventSubscriberInterface
 	/**
 	* Remove the posts table from the "unanswered" search if it's not actually being used
 	*/
-	protected function pruneSearchUnanswered(string $sql)
+	protected function pruneSearchUnanswered(string $sql): string
 	{
 		$old = $sql;
-
 		$sql = str_replace(', p.topic_id', ', t.topic_id', $sql);
 		$sql = str_replace('AND p.topic_id = t.topic_id', '', $sql);
 		$sql = preg_replace('(AND p\\.forum_id NOT IN \\([0-9, ]++\\))', '', $sql);
 
-		return (strpos($sql, 'p.') === false) ? $sql : $old;
+		if (strpos($sql, 'p.') !== false)
+		{
+			return $old;
+		}
+
+		$sql = str_replace('SELECT DISTINCT', 'SELECT', $sql);
+		$sql = preg_replace('(FROM \\K.*?posts p, )', '', $sql);
+
+		return $sql;
 	}
 }

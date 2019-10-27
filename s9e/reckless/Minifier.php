@@ -118,7 +118,7 @@ class Minifier
 		$inlineRegexp = '(^</?(?:[qu]|a(?:bbr|udio)?|b(?:d[io]|utton)?|c(?:it|od)e|d(?:ata(?:list)?|el|fn)|em(?:bed)?|i(?:frame|mg|n(?:put|s))?|kbd|label|m(?:ark|eter)|o(?:bjec|utpu)t|p(?:icture|rogress)|ruby|s(?:amp|cript|elect|mall|pan|trong|u[bp])?|t(?:extarea|ime)|v(?:ar|ideo)|wbr)\\b)';
 
 		// Match tags and Twig blocks, spans of whitespace, and anything else
-		$regexp = '((?:<[^>]++>|\\{%.*?%\\})(*:tag)|\\n\\s++(*:ws)|(?:[^\\n<{]++|.)(*:text))';
+		$regexp = '((?:<[^>]++>|\\{%.*?%\\})(*:tag)|\\n\\s*+(*:ws)|(?:[^\\n<{]++|.)(*:text))s';
 		preg_match_all($regexp, $template, $matches);
 
 		$lastType = 'text';
