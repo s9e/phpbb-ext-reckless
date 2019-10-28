@@ -136,6 +136,13 @@ class MinifierTest extends TestCase
 				'<a href="<!-- IF postrow.contact.U_CONTACT -->{postrow.contact.U_CONTACT}<!-- ELSE -->{postrow.U_POST_AUTHOR}<!-- ENDIF -->" title="{postrow.contact.NAME}"<!-- IF $S_LAST_CELL --> class="last-cell"<!-- ENDIF --><!-- IF postrow.contact.ID eq \'jabber\' --> onclick="popup(this.href, 750, 320); return false;"<!-- ENDIF -->>',
 				'<a href="<!-- IF postrow.contact.U_CONTACT -->{postrow.contact.U_CONTACT}<!-- ELSE -->{postrow.U_POST_AUTHOR}<!-- ENDIF -->" title="{postrow.contact.NAME}"<!-- IF $S_LAST_CELL --> class="last-cell"<!-- ENDIF --><!-- IF postrow.contact.ID eq \'jabber\' --> onclick="popup(this.href, 750, 320); return false;"<!-- ENDIF -->>'
 			],
+			[
+				'<p>
+					Text starts here
+					<b>ends here</b>
+				</p>',
+				'<p>Text starts here <b>ends here</b></p>'
+			],
 		];
 	}
 }
