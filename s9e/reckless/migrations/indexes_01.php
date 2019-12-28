@@ -15,7 +15,7 @@ class indexes_01 extends migration
 	{
 		return [
 			'drop_keys' => [
-				$this->table_prefix . 'notifications' => ['most_recent'],
+				$this->table_prefix . 'notifications' => ['item_parent_id', 'most_recent'],
 				$this->table_prefix . 'topics'        => ['listing_order']
 			]
 		];
@@ -26,6 +26,9 @@ class indexes_01 extends migration
 		return [
 			'add_index' => [
 				$this->table_prefix . 'notifications' => [
+					'item_parent_id' => [
+						'item_parent_id'
+					],
 					'most_recent' => [
 						'user_id',
 						'notification_time'
