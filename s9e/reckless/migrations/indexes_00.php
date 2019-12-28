@@ -29,7 +29,7 @@ class indexes_00 extends migration
 					'user_id' => ['user_id']
 				],
 				$this->table_prefix . 'user_group' => [
-					'user_id' => ['user_id']
+					'user_id' => ['user_id', 'user_pending']
 				]
 			],
 			'drop_keys' => [
