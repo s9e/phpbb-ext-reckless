@@ -16,7 +16,7 @@ class indexes_01 extends migration
 		return [
 			'drop_keys' => [
 				$this->table_prefix . 'notifications' => ['item_parent_id', 'most_recent'],
-				$this->table_prefix . 'topics'        => ['listing_order']
+				$this->table_prefix . 'topics'        => ['listing_order', 'special_topics']
 			]
 		];
 	}
@@ -41,6 +41,10 @@ class indexes_01 extends migration
 						'topic_type',
 						'topic_last_post_time',
 						'topic_last_post_id'
+					],
+					'special_topics' => [
+						'topic_type',
+						'forum_id'
 					]
 				]
 			]
