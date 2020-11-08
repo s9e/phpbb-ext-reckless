@@ -7,7 +7,7 @@
 */
 namespace s9e\reckless;
 
-use Twig_Source;
+use Twig\Source;
 use phpbb\template\twig\lexer;
 
 class Flexer extends lexer
@@ -17,23 +17,25 @@ class Flexer extends lexer
 	*/
 	protected $minifier;
 
-	public function tokenize($code, $filename = null)
+	public function tokenize(Source $source)
 	{
-		if ($code instanceof Twig_Source)
-		{
-			$filename = $code->getName();
-			$code     = $code->getCode();
-		}
-
+		$filename = $source->getName();
 		if (strpos($filename, 'acp_') === false)
 		{
-			if (!isset($this->minifier))
-			{
-				$this->minifier = new Minifier;
-			}
-			$code = $this->minifier->minifyTemplate($code);
+			$code   = $this->getMinifier()->minifyTemplate($source->getCode());
+			$source = new Source($code, $filename);
 		}
 
-		return parent::tokenize($code, $filename);
+		return parent::tokenize($source);
+	}
+
+	protected function getMinifier(): Minifier
+	{
+		if (!isset($this->minifier))
+		{
+			$this->minifier = new Minifier;
+		}
+
+		return $this->minifier;
 	}
 }

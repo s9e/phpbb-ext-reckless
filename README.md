@@ -1,4 +1,4 @@
-s9e\reckless is a phpBB 3.2 extension that aims to improve the performance of an average-to-big forum through the use of additional indexes, MySQL hints, query rewrites and dark magic.
+s9e\reckless is a phpBB 3.3 extension that aims to improve the performance of an average-to-big forum through the use of additional indexes, MySQL hints, query rewrites and dark magic.
 
 ### How to install
 
