@@ -210,7 +210,7 @@ possible_keys: listing_order
 ```
 ```sql
   SELECT t.topic_id
-    FROM phpbb_topics t FORCE INDEX (listing_order)
+    FROM phpbb_topics t
    WHERE t.forum_id = ?
      AND t.topic_type IN (0, 1)
      AND t.topic_visibility = 1
