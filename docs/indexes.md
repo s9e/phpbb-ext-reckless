@@ -229,6 +229,15 @@ possible_keys: forum_id,forum_id_type,fid_time_moved,topic_visibility,forum_vis_
 ```
 
 
+
+## phpbb_topics.special_topics
+
+`topic_type` `forum_id`
+
+A slightly better replacement to `forum_id_type`, used to query special topics in viewforum. Only makes a difference on installations with a large number of forums.
+
+
+
 ## phpbb_sessions.session_fid
 
 `session_forum_id` `session_user_id` `session_time`
