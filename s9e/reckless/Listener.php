@@ -24,6 +24,11 @@ class Listener implements EventSubscriberInterface
 	protected $forumCache = [];
 
 	/**
+	* @var array
+	*/
+	protected $topicCache = [];
+
+	/**
 	* @var string
 	*/
 	protected $topicsTable;
@@ -46,7 +51,8 @@ class Listener implements EventSubscriberInterface
 			'core.viewforum_modify_page_title'               => 'onViewforum',
 			'core.viewforum_modify_sort_data_sql'            => 'onViewforumCutoffQuery',
 			'core.viewtopic_modify_forum_id'                 => 'onViewtopic',
-//			'core.viewtopic_modify_post_data'                => 'onViewtopicQuery'
+//			'core.viewtopic_modify_post_data'                => 'onViewtopicQuery',
+			'core.viewtopic_modify_post_list_sql'            => 'onViewtopicList'
 		];
 	}
 
@@ -70,7 +76,7 @@ class Listener implements EventSubscriberInterface
 	}
 
 	/**
-	* Force the query to use the forum_id_type index
+	* Force the query to use the special_topics index
 	*/
 	public function onViewforumAnnouncementQuery($event)
 	{
@@ -155,6 +161,7 @@ class Listener implements EventSubscriberInterface
 	public function onViewtopic($event)
 	{
 		$this->forumCache[$event['topic_data']['forum_id']] = $event['topic_data'];
+		$this->topicCache[$event['topic_data']['topic_id']] = $event['topic_data'];
 	}
 
 	public function onViewtopicQuery($event)
@@ -179,6 +186,11 @@ class Listener implements EventSubscriberInterface
 
 		$sql = 'SELECT * FROM ' . USERS_TABLE . ' WHERE ' . $this->db->sql_in_set('user_id', $userIds);
 //		die($sql);
+	}
+
+	public function onViewtopicList($event)
+	{
+//		die($event['sql']);
 	}
 
 	public function onVisibilitySql($event)
